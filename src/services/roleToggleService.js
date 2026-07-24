@@ -128,6 +128,14 @@ export async function toggleRole(interaction, roleId) {
     }
 
     await member.roles.add(role, 'Self-role toggle');
+
+const refreshedMember = await guild.members.fetch(member.id);
+
+logger.info('Role debug after add', {
+    expectedRole: role.id,
+    hasRole: refreshedMember.roles.cache.has(role.id),
+    roles: refreshedMember.roles.cache.map(r => `${r.name} (${r.id})`)
+});
     await member.fetch(true);
 
 logger.info('Roles after add', {
