@@ -48,29 +48,16 @@ class RolesPanel {
 
         for (const role of panel.roles) {
 
-            row.addComponents(
+            const button = new ButtonBuilder()
+                .setCustomId(`roles:${panel.id}:${role.id}`)
+                .setLabel(String(role.label ?? "Role").slice(0, 80))
+                .setStyle(role.style ?? ButtonStyle.Secondary);
 
-                new ButtonBuilder()
+            if (role.emoji) {
+                button.setEmoji(role.emoji);
+            }
 
-                    .setCustomId(
-
-                        `roles:${panel.id}:${role.id}`
-
-                    )
-
-                    .setLabel(role.label)
-
-                    .setStyle(
-
-                        role.style ??
-
-                        ButtonStyle.Secondary
-
-                    )
-
-                    .setEmoji(role.emoji ?? null)
-
-            );
+            row.addComponents(button);
 
         }
 
