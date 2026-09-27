@@ -1,0 +1,9 @@
+import { ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder } from "discord.js";
+import verificationConfig from "./verificationConfig.js";
+const replace=(v,g)=>typeof v==="string"?v.replace(/\{server\}/g,g?.name??"Server"):v;
+class VerificationPanel {
+ buildEmbed(config={},guild){const data=config.embed??verificationConfig.defaults.embed;const e=new EmbedBuilder();try{if(data.color!==undefined)e.setColor(data.color);}catch{}if(data.title)e.setTitle(replace(data.title,guild));if(data.description)e.setDescription(replace(data.description,guild));if(data.url)e.setURL(data.url);if(data.author?.name)e.setAuthor({name:replace(data.author.name,guild),...(data.author.iconURL?{iconURL:data.author.iconURL}:{}),...(data.author.url?{url:data.author.url}:{})});if(data.footer?.text)e.setFooter({text:replace(data.footer.text,guild),...(data.footer.iconURL?{iconURL:data.footer.iconURL}:{})});if(data.thumbnail?.url)e.setThumbnail(data.thumbnail.url);if(data.image?.url)e.setImage(data.image.url);if(Array.isArray(data.fields)&&data.fields.length)e.addFields(data.fields.slice(0,25).filter(f=>f?.name&&f?.value).map(f=>({name:replace(f.name,guild),value:replace(f.value,guild),inline:Boolean(f.inline)})));if(data.timestamp)e.setTimestamp();if(!e.data.title&&!e.data.description&&!e.data.fields?.length)e.setDescription(`Welcome to ${guild?.name??"this server"}.`);return e;}
+ buildComponents(config={}){const style={primary:ButtonStyle.Primary,secondary:ButtonStyle.Secondary,success:ButtonStyle.Success,danger:ButtonStyle.Danger}[config.button?.style]??ButtonStyle.Success;return [new ActionRowBuilder().addComponents(new ButtonBuilder().setCustomId("verification:verify").setLabel(String(config.button?.label||"Verify").slice(0,80)).setStyle(style).setEmoji(config.button?.emoji||"✅"))];}
+ create(config,guild){return{embeds:[this.buildEmbed(config,guild)],components:this.buildComponents(config)};}
+}
+export default new VerificationPanel();
