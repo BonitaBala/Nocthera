@@ -156,8 +156,51 @@ class VerificationHandler {
         const menu = new RoleSelectMenuBuilder().setCustomId(`verification:role:${field}`).setPlaceholder("Select a role");
         await reply(i, { content: `🎭 Select the ${field === "verifiedRole" ? "verified" : "unverified"} role.`, components: [new ActionRowBuilder().addComponents(menu)] }); return true;
     }
-    async channel(i) { const [, , field] = i.customId.split(":"); const c = verificationManager.getConfig(i.guildId); c[field] = i.values[0]; verificationManager.setConfig(i.guildId,c); await i.update({content:`✅ ${field} set to <#${i.values[0]}>.`,components:[]}); return true; }
-    async role(i) { const [, , field] = i.customId.split(":"); const c = verificationManager.getConfig(i.guildId); c[field] = i.values[0]; verificationManager.setConfig(i.guildId,c); await i.update({content:`✅ ${field} set to <@&${i.values[0]}>.`,components:[]}); return true; }
+    async channel(i) {
+        const [, , field] = i.customId.split(":");
+        const channelId = i.values?.[0];
+        if (!channelId || !["panelChannel", "logChannel"].includes(field)) {
+            await reply(i, { content: "❌ Invalid verification channel selection." });
+            return true;
+        }
+
+        const c = verificationManager.getConfig(i.guildId);
+        c[field] = channelId;
+        verificationManager.setConfig(i.guildId, c);
+
+        await i.update({
+            content: `✅ ${field === "panelChannel" ? "Panel channel" : "Log channel"} set to <#${channelId}>.`,
+            embeds: [this.embed(i.guild, c)],
+            components: this.components(c)
+        });
+        return true;
+    }
+
+    async role(i) {
+        const [, , field] = i.customId.split(":");
+        const roleId = i.values?.[0];
+        if (!roleId || !["verifiedRole", "unverifiedRole"].includes(field)) {
+            await reply(i, { content: "❌ Invalid verification role selection." });
+            return true;
+        }
+
+        const role = await i.guild.roles.fetch(roleId).catch(() => null);
+        if (!role) {
+            await reply(i, { content: "❌ That role could not be found." });
+            return true;
+        }
+
+        const c = verificationManager.getConfig(i.guildId);
+        c[field] = roleId;
+        verificationManager.setConfig(i.guildId, c);
+
+        await i.update({
+            content: `✅ ${field === "verifiedRole" ? "Verified role" : "Unverified role"} set to <@&${roleId}>.`,
+            embeds: [this.embed(i.guild, c)],
+            components: this.components(c)
+        });
+        return true;
+    }
 
     async buttonModal(i) {
         const c = verificationManager.getConfig(i.guildId); const m = new ModalBuilder().setCustomId("verification:button-modal").setTitle("Verification Button");
