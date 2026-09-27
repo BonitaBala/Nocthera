@@ -153,14 +153,9 @@ class CommandHandler {
 
             );
 
-        if (
-            !command ||
-            typeof command.autocomplete !==
-            "function"
-        ) {
-
-            return false;
-
+        if (!command || typeof command.autocomplete !== "function") {
+            await interaction.respond([]).catch(() => {});
+            return true;
         }
 
         await command.autocomplete(

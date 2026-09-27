@@ -58,10 +58,12 @@ export default {
                     );
 
                 if (handled) {
-
                     return;
-
                 }
+                if (!interaction.responded) {
+                    await interaction.respond([]).catch(() => {});
+                }
+                return;
 
             }
 
@@ -336,26 +338,21 @@ export default {
             // Generic Select Menus
             // =====================================================
 
-            if (interaction.isStringSelectMenu()) {
+            if (interaction.isAnySelectMenu?.()) {
 
-                const handler =
-                    client.selectMenus.get(
-                        interaction.customId
-                    );
+                const handler = client.selectMenus.get(interaction.customId);
 
-                if (!handler) {
-
-                    return;
-
+                if (handler) {
+                    return handler.execute(client, interaction);
                 }
 
-                return handler.execute(
-
-                    client,
-
-                    interaction
-
-                );
+                if (!interaction.replied && !interaction.deferred) {
+                    await interaction.reply({
+                        content: "❌ This selection is not configured for Nocthera.",
+                        flags: 64
+                    }).catch(() => {});
+                }
+                return;
 
             }
 
@@ -370,19 +367,17 @@ export default {
                         interaction.customId
                     );
 
-                if (!handler) {
-
-                    return;
-
+                if (handler) {
+                    return handler.execute(client, interaction);
                 }
 
-                return handler.execute(
-
-                    client,
-
-                    interaction
-
-                );
+                if (!interaction.replied && !interaction.deferred) {
+                    await interaction.reply({
+                        content: "❌ This form is not configured for Nocthera.",
+                        flags: 64
+                    }).catch(() => {});
+                }
+                return;
 
             }
 
