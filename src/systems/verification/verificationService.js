@@ -49,7 +49,7 @@ class VerificationService {
         return config;
     }
 
-    async verify(member) {
+    async verify(member, options = {}) {
         if (!member?.guild) return { success: false, reason: "Invalid member." };
         const config = this.get(member.guild.id);
         if (!config.enabled) return { success: false, reason: "Verification is disabled." };
@@ -57,6 +57,7 @@ class VerificationService {
         if (config.protections.bypassRoles?.some(id => member.roles.cache.has(id))) {
             return this.applyVerifiedRole(member, config);
         }
+
 
         if (config.protections.accountAge) {
             const createdAt = member.user?.createdTimestamp ?? member.user?.createdAt?.getTime?.() ?? 0;
@@ -80,7 +81,7 @@ class VerificationService {
             }
         }
 
-        if (config.protections.captcha) {
+        if (config.protections.captcha && options.captchaPassed !== true) {
             const session = this.captchaSessions.get(`${member.guild.id}:${member.id}`);
             if (!session || session.expiresAt < Date.now()) {
                 return { success: false, reason: "captcha_required" };

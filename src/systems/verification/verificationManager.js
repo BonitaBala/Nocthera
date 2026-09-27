@@ -11,7 +11,7 @@ class VerificationManager {
     disable(guildId) { return verificationService.disable(guildId); }
     reset(guildId) { return verificationService.reset(guildId); }
     isEnabled(guildId) { return verificationService.isEnabled(guildId); }
-    verify(member) { return verificationService.verify(member); }
+    verify(member, options = {}) { return verificationService.verify(member, options); }
     createCaptcha(guildId, userId) { return verificationService.createCaptcha(guildId, userId); }
     consumeCaptcha(guildId, userId, code) { return verificationService.consumeCaptcha(guildId, userId, code); }
     async shutdown() { await verificationService.shutdown(); this.client = null; }
