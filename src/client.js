@@ -5,8 +5,6 @@
  * ============================================================
  */
 
-import config from "./core/config.js";
-
 import {
     Client,
     Collection,

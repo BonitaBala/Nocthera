@@ -204,7 +204,8 @@ export default {
             if (
                 interaction.isButton() ||
                 interaction.isModalSubmit() ||
-                interaction.isStringSelectMenu()
+                interaction.isStringSelectMenu() ||
+                interaction.isChannelSelectMenu?.()
             ) {
 
                 const handled =
