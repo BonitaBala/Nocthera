@@ -13,6 +13,8 @@ import {
     REST
 } from "discord.js";
 
+import config from "./core/config.js";
+
 export default function createClient() {
 
     const client = new Client({
