@@ -127,9 +127,8 @@ function buildPanel(cfg) {
         description:
             "**Adult media tag system** — NSFW channels only.\n\n" +
             "• `!anal` → Real Life anal\n" +
-            "• `!pussy hentai` → pussy anal\n" +
-            "• `!anal 3d` → 3D anal\n" +
-            "• `!bondage anal` → Real bondage + anal\n\n" +
+            "• `!pussy hentai` → Hentai pussy\n" +
+            "• `!ass 3d` → 3D ass\n" +
             "Sends **actual image / gif / video files** (not links).",
         status: buildStatusText(cfg),
         buttons: [
