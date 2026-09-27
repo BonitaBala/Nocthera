@@ -72,6 +72,11 @@ async function bootstrap() {
 
     await config.load();
 
+    const discordToken = config.getValue("discord", "token") || "";
+    logger.info(
+        `Discord token loaded (${discordToken.length} characters; normalized prefix/whitespace).`
+    );
+
     // ========================================================
     // Database
     // ========================================================
@@ -180,7 +185,7 @@ async function bootstrap() {
     );
 
     await client.login(
-        process.env.BOT_TOKEN
+        config.getValue("discord", "token")
     );
 
     const elapsed =

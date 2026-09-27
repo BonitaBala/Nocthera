@@ -1,5 +1,12 @@
 \# Changelog
 
+## v1.1.0 — Railway Authorization Header Hotfix
+
+- Normalized `BOT_TOKEN` by trimming whitespace/quotes and removing accidental `Bot ` / `Bearer ` prefixes.
+- Reused the normalized token for Discord REST and `client.login()`.
+- Added a startup diagnostic that reports only token length, never the token itself.
+
+
 
 
 All notable changes to \*\*Nocthera\*\* will be documented in this file.

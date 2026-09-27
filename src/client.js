@@ -60,8 +60,10 @@ export default function createClient() {
     // Discord REST
     // =====================================================
 
+    const discordToken = config.getValue("discord", "token") || "";
+
     client.rest = new REST({ version: "10" }).setToken(
-        process.env.BOT_TOKEN || ""
+        discordToken
     );
 
     // =====================================================

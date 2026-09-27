@@ -31,11 +31,25 @@ class ConfigManager {
 
         });
 
+        // Railway/hosting dashboards sometimes receive the Discord token
+        // with accidental surrounding quotes, whitespace, or a copied
+        // `Bot ` / `Bearer ` prefix. discord.js adds the `Bot ` prefix
+        // itself, so passing either prefix through produces an invalid
+        // Authorization header. Normalize once and use the clean token
+        // everywhere.
+        const rawToken = String(process.env.BOT_TOKEN ?? "");
+        const token = rawToken
+            .trim()
+            .replace(/^['"]|['"]$/g, "")
+            .trim()
+            .replace(/^(?:Bot|Bearer)\s+/i, "")
+            .trim();
+
         this.cache.set("discord", {
 
-            token: process.env.BOT_TOKEN,
+            token,
 
-            clientId: process.env.CLIENT_ID,
+            clientId: process.env.CLIENT_ID?.trim(),
 
             applicationId: process.env.APPLICATION_ID,
 
