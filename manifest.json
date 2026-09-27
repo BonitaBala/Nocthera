@@ -1,0 +1,37 @@
+{
+  "name": "Nocthera",
+  "version": "1.1.0",
+  "codename": "Bonita",
+  "stage": "Stabilization",
+  "status": "Stable Candidate",
+  "build": 2,
+  "architecture": "1.1.0",
+  "engine": {
+    "node": "24.x",
+    "discordjs": "14.x",
+    "module": "ESM"
+  },
+  "deployment": {
+    "docker": true,
+    "dockerCompose": true,
+    "railway": true,
+    "render": true,
+    "githubActions": false
+  },
+  "database": {
+    "type": "PostgreSQL",
+    "connected": false
+  },
+  "stats": {
+    "folders": 0,
+    "files": 0,
+    "modules": 0,
+    "commands": 0,
+    "events": 0,
+    "features": 0
+  },
+  "release": {
+    "stable": false,
+    "production": false
+  }
+}
