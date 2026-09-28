@@ -12,21 +12,21 @@ class SystemSelfTestHandler {
         if (!interaction?.isButton?.() || !interaction.customId?.endsWith(":selftest")) return false;
         if (interaction.replied || interaction.deferred) return true;
 
-        // A self-test can take long enough to cross Discord's 3-second initial
-        // response window. Defer immediately so the final report can safely use
-        // editReply instead of racing the interaction expiry.
+        // Only claim the interaction when this generic registry actually owns it.
+        // System-specific self-tests (for example security:selftest) are handled
+        // by their own system handler. Deferring here and then deleting the reply
+        // would still leave the interaction acknowledged and make the real handler
+        // fail with InteractionAlreadyReplied.
+        const system = interaction.customId.slice(0, -":selftest".length);
+        const test = registry.get(system);
+        if (!test) return false;
+
+        // Registered self-tests can take longer than Discord's initial response
+        // window, so acknowledge before running the test.
         try {
             await interaction.deferReply({ flags: MessageFlags.Ephemeral });
         } catch {
             return true;
-        }
-
-        const system = interaction.customId.slice(0, -":selftest".length);
-        if (!registry.has(system)) {
-            // Let the system-specific handler process its own self-test.
-            // Security, for example, has a dedicated safe self-test implementation.
-            try { await interaction.deleteReply(); } catch {}
-            return false;
         }
 
         try {
