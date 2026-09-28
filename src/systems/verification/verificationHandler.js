@@ -26,6 +26,9 @@ class VerificationHandler {
     async handle(i) {
         if (!i?.customId?.startsWith(PREFIX)) return false;
         if (i.isButton() && i.customId === "verification:verify") return this.verify(i);
+        // CAPTCHA submission is a public verification action; it must not require
+        // Manage Server/Administrator because normal members need to complete it.
+        if (i.isModalSubmit() && i.customId === "verification:captcha") return this.modal(i);
         if (!admin(i)) { await reply(i, { content: "❌ Manage Server permission required." }); return true; }
         if (i.isButton()) {
             if (i.customId.startsWith("verification:apply-embed:")) return this.applyEmbed(i);
