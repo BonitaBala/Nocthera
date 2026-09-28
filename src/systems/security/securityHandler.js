@@ -39,8 +39,21 @@ class SecurityHandler {
             return i.reply({ content: `\`\`\`json\n${JSON.stringify(service.health(), null, 2).slice(0, 1850)}\n\`\`\``, flags: MessageFlags.Ephemeral });
         }
         if (action === "selftest") {
-            const report = await SecuritySelfTest.run(securitySystem.client, { guildId: i.guildId });
-            return i.reply({ content: SecuritySelfTest.format(report), flags: MessageFlags.Ephemeral });
+            // Self-tests touch multiple in-memory engines and can take longer
+            // than Discord's 3-second interaction acknowledgement window.
+            // Defer first, then edit the original response with the report.
+            if (!i.deferred && !i.replied) {
+                await i.deferReply({ flags: MessageFlags.Ephemeral });
+            }
+            try {
+                const report = await SecuritySelfTest.run(securitySystem.client, { guildId: i.guildId });
+                await i.editReply({ content: SecuritySelfTest.format(report) });
+            } catch (error) {
+                await i.editReply({
+                    content: `❌ **Nocthera Security Self-Test failed.**\n${String(error?.message ?? error).slice(0, 1800)}`
+                }).catch(() => {});
+            }
+            return true;
         }
         if (action === "reset") {
             securitySystem.reset();
